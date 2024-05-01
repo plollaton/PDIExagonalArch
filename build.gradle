@@ -11,14 +11,22 @@ java {
 	sourceCompatibility = '17'
 }
 
+jar {
+	enabled = true
+}
+
 repositories {
 	mavenCentral()
+	maven {
+		url "https://oss.sonatype.org/content/repositories/snapshots"
+	}
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	implementation 'com.github.mvallim:java-fluent-validator:1.10.0'
 
 	developmentOnly 'org.springframework.boot:sprint-boot-devtools'
 

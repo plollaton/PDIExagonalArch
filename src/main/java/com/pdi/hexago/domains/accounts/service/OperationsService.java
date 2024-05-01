@@ -1,8 +1,11 @@
 package com.pdi.hexago.domains.accounts.service;
 
+import br.com.fluentvalidator.context.ValidationResult;
 import com.pdi.hexago.domains.accounts.Account;
 import com.pdi.hexago.domains.accounts.DTOs.AccountDTO;
 import com.pdi.hexago.domains.Investment;
+import com.pdi.hexago.domains.accounts.exceptions.AccountInvalidException;
+import com.pdi.hexago.domains.accounts.validations.AccountValidator;
 import com.pdi.hexago.domains.customers.Customer;
 import com.pdi.hexago.domains.customers.CustomersDAO;
 import com.pdi.hexago.domains.accounts.exceptions.AccountAlreadyExistsException;
@@ -10,6 +13,9 @@ import com.pdi.hexago.domains.accounts.exceptions.AccountNotFoundException;
 import com.pdi.hexago.domains.accounts.mappers.AccountMapper;
 import com.pdi.hexago.domains.accounts.repository.AccountRepository;
 import com.pdi.hexago.domains.accounts.repository.entities.AccountEntity;
+import com.pdi.hexago.domains.customers.mappers.CustomerMapper;
+import com.pdi.hexago.domains.customers.repository.CustomerRepository;
+import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,46 +24,67 @@ import java.util.UUID;
 @Service
 public class OperationsService implements IOperationsService {
 
+    private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
+    private final AccountMapper accountMapper;
+    private final AccountValidator accountValidator;
     private AccountRepository accountRepository;
 
     private CustomersDAO customerDAO;
 
     public OperationsService(AccountRepository accountRepository,
-                             CustomersDAO customerDAO) {
+                             CustomersDAO customerDAO,
+                             CustomerRepository customerRepository,
+                             CustomerMapper customerMapper,
+                             AccountMapper accountMapper,
+                             AccountValidator accountValidator) {
         this.accountRepository = accountRepository;
         this.customerDAO = customerDAO;
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
+        this.accountMapper = accountMapper;
+        this.accountValidator = accountValidator;
     }
 
     @Override
-    public Account getAccountByNumber(String number) {
-        AccountEntity accountEntity = accountRepository.findByNumber(number);
-        return AccountMapper.INSTANCE.accountEntityToAccount(accountEntity);
+    public Account getAccountByAccountNumber(String accountNumber) {
+        AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber);
+        return accountMapper.accountEntityToAccount(accountEntity);
     }
 
     @Override
-    public UUID createAccount(AccountDTO accountDTO) throws AccountAlreadyExistsException {
-        Account account = getAccountByNumber(accountDTO.accountNumber());
+    public AccountDTO createAccount(AccountDTO accountDTO) throws AccountAlreadyExistsException {
+        Account account = getAccountByAccountNumber(accountDTO.accountNumber());
         if (account != null) {
             throw new AccountAlreadyExistsException();
         }
+        account = Account.builder().build();
 
-        Customer customer = customerDAO.getCustomerByDocumentNumber(accountDTO.CustomerName());
+        Customer customer = customerDAO.getCustomerByDocumentNumber(accountDTO.customer().documentNumber());
         if (customer == null) {
-            //criar novo custoemr.
+           customer = new Customer(accountDTO.customer().name(),
+                   accountDTO.customer().email(),
+                   accountDTO.customer().documentNumber());
+
+           CustomerEntity customerEntity = customerRepository.save(customerMapper.CustomerToCustomerEntity(customer));
+           account.setCustomer(customerMapper.CustomerEntityToCustomer(customerEntity));
         }
 
-       // criar nova conta
+        account.setAccountNumber(accountDTO.accountNumber());
+        ValidationResult validationResult = accountValidator.validate(account);
+        if(!validationResult.isValid()) {
+            throw new AccountInvalidException(validationResult.getErrors().toString());
+        }
 
+        AccountEntity accountEntity = accountRepository.save(accountMapper.accountToAccountEntity(account));
 
-
-
-        return null;
+        return accountMapper.accountEntityToAccountDTO(accountEntity);
     }
 
     @Override
     public boolean withDraw(String accountNumber, BigDecimal value) {
         try {
-            Account account = getAccountByNumber(accountNumber);
+            Account account = getAccountByAccountNumber(accountNumber);
             if (account == null) {
                 throw new AccountNotFoundException();
             }

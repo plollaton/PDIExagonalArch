@@ -1,11 +1,11 @@
 package com.pdi.hexago.web;
 
 import com.pdi.hexago.domains.accounts.DTOs.AccountDTO;
+import com.pdi.hexago.domains.accounts.exceptions.AccountAlreadyExistsException;
 import com.pdi.hexago.domains.accounts.service.IOperationsService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -26,8 +26,8 @@ public class MainController {
     }
 
     @PostMapping(value = "/account")
-    public String account(@RequestBody AccountDTO account){
-        IOperationsService.createAccount(account);
-        return "";
+    public ResponseEntity<AccountDTO> account(@RequestBody AccountDTO account) throws AccountAlreadyExistsException {
+        AccountDTO accountDTO = IOperationsService.createAccount(account);
+        return ResponseEntity.ok(accountDTO);
     }
 }

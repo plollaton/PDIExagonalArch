@@ -1,4 +1,10 @@
 package com.pdi.hexago.domains.accounts.DTOs;
 
-public record AccountDTO(String accountNumber, String CustomerName) {
+import com.pdi.hexago.domains.customers.DTOs.CustomerDTO;
+
+import java.util.UUID;
+
+public record AccountDTO(UUID id,
+                         String accountNumber,
+                         CustomerDTO customer) {
 }

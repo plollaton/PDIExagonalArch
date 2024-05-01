@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface IOperationsService {
-    Account getAccountByNumber(String number);
+    Account getAccountByAccountNumber(String accountNumber);
 
-    UUID createAccount(AccountDTO accountDTO) throws AccountAlreadyExistsException;
+    AccountDTO createAccount(AccountDTO accountDTO) throws AccountAlreadyExistsException;
     boolean withDraw(String accountNumber, BigDecimal value);
     boolean deposit(Account account, BigDecimal value);
     boolean transferMoney(Account from, Account to, BigDecimal value);

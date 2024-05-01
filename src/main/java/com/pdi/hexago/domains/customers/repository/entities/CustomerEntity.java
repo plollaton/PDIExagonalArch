@@ -1,12 +1,12 @@
 package com.pdi.hexago.domains.customers.repository.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "Customers")
@@ -17,7 +17,8 @@ import lombok.NoArgsConstructor;
 public class CustomerEntity {
 
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String name;
 
