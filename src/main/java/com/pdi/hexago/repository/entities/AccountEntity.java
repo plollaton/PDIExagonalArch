@@ -1,4 +1,4 @@
-package com.pdi.hexago.domains.accounts.repository.entities;
+package com.pdi.hexago.repository.entities;
 
 import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
 import jakarta.persistence.*;

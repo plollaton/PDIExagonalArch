@@ -2,7 +2,7 @@ package com.pdi.hexago.domains.accounts.mappers;
 
 import com.pdi.hexago.domains.accounts.Account;
 import com.pdi.hexago.domains.accounts.DTOs.AccountDTO;
-import com.pdi.hexago.domains.accounts.repository.entities.AccountEntity;
+import com.pdi.hexago.repository.entities.AccountEntity;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

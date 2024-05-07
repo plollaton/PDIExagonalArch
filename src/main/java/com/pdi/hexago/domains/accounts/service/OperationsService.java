@@ -4,22 +4,28 @@ import br.com.fluentvalidator.context.ValidationResult;
 import com.pdi.hexago.domains.accounts.Account;
 import com.pdi.hexago.domains.accounts.DTOs.AccountDTO;
 import com.pdi.hexago.domains.Investment;
+import com.pdi.hexago.domains.accounts.DTOs.AmountDTO;
 import com.pdi.hexago.domains.accounts.exceptions.AccountInvalidException;
+import com.pdi.hexago.repository.repositories.TransactionsRepository;
+import com.pdi.hexago.repository.entities.TransactionsEntity;
 import com.pdi.hexago.domains.accounts.validations.AccountValidator;
 import com.pdi.hexago.domains.customers.Customer;
 import com.pdi.hexago.domains.customers.CustomersDAO;
 import com.pdi.hexago.domains.accounts.exceptions.AccountAlreadyExistsException;
 import com.pdi.hexago.domains.accounts.exceptions.AccountNotFoundException;
 import com.pdi.hexago.domains.accounts.mappers.AccountMapper;
-import com.pdi.hexago.domains.accounts.repository.AccountRepository;
-import com.pdi.hexago.domains.accounts.repository.entities.AccountEntity;
+import com.pdi.hexago.repository.repositories.AccountRepository;
+import com.pdi.hexago.repository.entities.AccountEntity;
+import com.pdi.hexago.domains.accounts.DTOs.TransactionDTO;
 import com.pdi.hexago.domains.customers.mappers.CustomerMapper;
 import com.pdi.hexago.domains.customers.repository.CustomerRepository;
-import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
+import com.pdi.hexago.domains.customers.service.ICustomerService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.sql.Timestamp;
+
+import static java.time.LocalTime.now;
 
 @Service
 public class OperationsService implements IOperationsService {
@@ -28,22 +34,30 @@ public class OperationsService implements IOperationsService {
     private final CustomerMapper customerMapper;
     private final AccountMapper accountMapper;
     private final AccountValidator accountValidator;
+    private final ICustomerService customerService;
+    private final TransactionsRepository transactionRepository;
+    private final TransactionsRepository transactionsRepository;
     private AccountRepository accountRepository;
 
     private CustomersDAO customerDAO;
 
     public OperationsService(AccountRepository accountRepository,
                              CustomersDAO customerDAO,
+                             ICustomerService customerService,
                              CustomerRepository customerRepository,
                              CustomerMapper customerMapper,
                              AccountMapper accountMapper,
-                             AccountValidator accountValidator) {
+                             AccountValidator accountValidator,
+                             TransactionsRepository transactionsRepository) {
         this.accountRepository = accountRepository;
         this.customerDAO = customerDAO;
+        this.customerService = customerService;
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.accountMapper = accountMapper;
         this.accountValidator = accountValidator;
+        this.transactionRepository = transactionsRepository;
+        this.transactionsRepository = transactionsRepository;
     }
 
     @Override
@@ -62,12 +76,8 @@ public class OperationsService implements IOperationsService {
 
         Customer customer = customerDAO.getCustomerByDocumentNumber(accountDTO.customer().documentNumber());
         if (customer == null) {
-           customer = new Customer(accountDTO.customer().name(),
-                   accountDTO.customer().email(),
-                   accountDTO.customer().documentNumber());
-
-           CustomerEntity customerEntity = customerRepository.save(customerMapper.CustomerToCustomerEntity(customer));
-           account.setCustomer(customerMapper.CustomerEntityToCustomer(customerEntity));
+           customer = customerService.createCustomer(accountDTO.customer());
+           account.setCustomer(customer);
         }
 
         account.setAccountNumber(accountDTO.accountNumber());
@@ -77,6 +87,13 @@ public class OperationsService implements IOperationsService {
         }
 
         AccountEntity accountEntity = accountRepository.save(accountMapper.accountToAccountEntity(account));
+
+        TransactionsEntity initialTransaction = new TransactionsEntity();
+        initialTransaction.setPreviousAmount(BigDecimal.ZERO);
+        initialTransaction.setTransactionValue(accountDTO.amount() != null ? accountDTO.amount() : BigDecimal.ZERO);
+        initialTransaction.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        initialTransaction.setAccount(accountEntity);
+        transactionsRepository.save(initialTransaction);
 
         return accountMapper.accountEntityToAccountDTO(accountEntity);
     }
@@ -88,7 +105,7 @@ public class OperationsService implements IOperationsService {
             if (account == null) {
                 throw new AccountNotFoundException();
             }
-            account.withDraw(value);
+            //account.withDraw(value);
             accountRepository.save(AccountMapper.INSTANCE.accountToAccountEntity(account));
             return true;
         } catch (Exception e) {
@@ -98,7 +115,16 @@ public class OperationsService implements IOperationsService {
     }
 
     @Override
-    public boolean deposit(Account account, BigDecimal value) {
+    public boolean deposit(TransactionDTO transactionDTO) throws AccountNotFoundException {
+        Account account = getAccountByAccountNumber(transactionDTO.accountNumber());
+        if (account == null){
+            throw new AccountNotFoundException();
+        }
+
+
+
+
+
         return false;
     }
 
@@ -110,5 +136,14 @@ public class OperationsService implements IOperationsService {
     @Override
     public boolean Investment(Account account, Investment investment, BigDecimal value) {
         return false;
+    }
+
+    @Override
+    public AmountDTO getAmount(String accountNumber) {
+        AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber);
+
+        TransactionsEntity transactions = transactionsRepository.findFirstByAccountIsOrderByTimestampDesc(accountEntity);
+
+        return new AmountDTO(accountNumber, transactions.getPreviousAmount().add(transactions.getTransactionValue()));
     }
 }

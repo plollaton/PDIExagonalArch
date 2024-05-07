@@ -1,6 +1,6 @@
-package com.pdi.hexago.domains.accounts.repository;
+package com.pdi.hexago.repository.repositories;
 
-import com.pdi.hexago.domains.accounts.repository.entities.AccountEntity;
+import com.pdi.hexago.repository.entities.AccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {

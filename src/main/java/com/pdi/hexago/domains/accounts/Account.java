@@ -18,23 +18,6 @@ public class Account {
     private BigDecimal balance;
     private List<Investment> investments;
 
-    public void withDraw(BigDecimal valor){
-        balance = balance.subtract(valor);
-    }
-
-    void deposit(BigDecimal valor){
-        balance = balance.add(valor);
-    }
-
-    void transfer(Account target, BigDecimal valor){
-        withDraw(valor);
-        target.deposit(valor);
-    }
-
-    void invest(BigDecimal valor){
-
-    }
-
     public Customer getCustomer() {
         return customer;
     }
