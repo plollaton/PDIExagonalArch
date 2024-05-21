@@ -3,12 +3,15 @@ package com.pdi.hexago.web;
 import com.pdi.hexago.domains.accounts.DTOs.AccountDTO;
 import com.pdi.hexago.domains.accounts.DTOs.AmountDTO;
 import com.pdi.hexago.domains.accounts.exceptions.AccountAlreadyExistsException;
+import com.pdi.hexago.domains.accounts.exceptions.AccountNotFoundException;
 import com.pdi.hexago.domains.accounts.service.IOperationsService;
 import com.pdi.hexago.domains.accounts.DTOs.TransactionDTO;
+import com.pdi.hexago.domains.customers.DTOs.CustomerDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 public class MainController {
@@ -32,6 +35,12 @@ public class MainController {
         return ResponseEntity.ok(accountDTO);
     }
 
+    @GetMapping(value="/customer/{customerdoc}/accounts")
+    public ResponseEntity<List<AccountDTO>> customerAccounts(@PathVariable("customerDoc") String customerDoc){
+        List<AccountDTO> accounts = IOperationsService.listAccounts(customerDoc);
+        return ResponseEntity.ok(accounts);
+    }
+
     @GetMapping(value = "/account/amount/{accountNumber}")
     public ResponseEntity<AmountDTO> getAccount(@PathVariable("accountNumber") String accountNumber) {
         AmountDTO amount = IOperationsService.getAmount(accountNumber);
@@ -39,8 +48,9 @@ public class MainController {
     }
 
     @PostMapping(value = "/account/deposit")
-    public String deposit(@RequestBody TransactionDTO transactionDTO) throws AccountAlreadyExistsException {
-       // IOperationsService.deposit(transactionDTO);
+    public String deposit(@RequestBody TransactionDTO transactionDTO) throws AccountNotFoundException {
+        IOperationsService.deposit(transactionDTO);
         return "";
     }
+
 }
