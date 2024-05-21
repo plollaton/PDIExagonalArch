@@ -1,6 +1,6 @@
-package com.pdi.hexago.domains.customers.repository;
+package com.pdi.hexago.repository.repositories;
 
-import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
+import com.pdi.hexago.repository.entities.CustomerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

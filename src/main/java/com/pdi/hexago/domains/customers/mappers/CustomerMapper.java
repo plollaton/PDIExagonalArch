@@ -1,7 +1,7 @@
 package com.pdi.hexago.domains.customers.mappers;
 
 import com.pdi.hexago.domains.customers.Customer;
-import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
+import com.pdi.hexago.repository.entities.CustomerEntity;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

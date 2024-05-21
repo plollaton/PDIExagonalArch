@@ -1,8 +1,8 @@
 package com.pdi.hexago.domains.customers;
 
 import com.pdi.hexago.domains.customers.mappers.CustomerMapper;
-import com.pdi.hexago.domains.customers.repository.ICustomerRepository;
-import com.pdi.hexago.domains.customers.repository.entities.CustomerEntity;
+import com.pdi.hexago.repository.repositories.ICustomerRepository;
+import com.pdi.hexago.repository.entities.CustomerEntity;
 import org.springframework.stereotype.Component;
 
 @Component
