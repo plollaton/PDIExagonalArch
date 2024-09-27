@@ -1,19 +1,32 @@
 1. Controle de Contas Bancarias (CCB)
 - Através do CCB devo conseguir manter as informações dos clientes
 - Através do CCB devo conseguir manter as informações de contas
+- O CCB deve prover uma API externa com documentação para movimentações bancárias.
 
 2. Manter Clientes
-- Cada cliente deverá conter apenas 1 cadastro, baseado no email e no documento.
+- Cada cliente deverá conter apenas 1 cadastro, baseado no documento do cliente.
 - Caso tente cadastrar um novo cliente com o mesmo documento, devo apenas adicionar o email em uma lista de emails de acesso.
 - Cada cliente pode conter apenas uma conta do tipo Conta Corrente, uma do tipo Poupança e quantas contas de investimentos desejar.
 
 3. Manter Contas
-- Cada conta deve obrigatoriamente conter um cliente no momento do cadastro
-- Uma conta de Poupança ou de Investimento deve obrigatoriamente conter uma conta do tipo Conta Corrente como principal;
+- Cada conta deve obrigatoriamente conter um cliente no momento do cadastro.
+- Uma conta de Poupança ou de Investimento deve obrigatoriamente conter uma conta do tipo Conta Corrente como principal.
 - Para uma conta possuir limite, é necessário ao menos 1 conta de Investimentos;
-- Caso a conta de investimento seja zerada, o limite da conta principal deve automaticamente ser retirado;
+- O valor do limite será o mesmo do total aplicado.
+- Caso as contas de investimento sejam zeradas, o limite da conta principal deve automaticamente ser retirado.
 
 4. Manter Movimentações de Contas
+- Uma conta corrente deverá ser o único canal de entrada de valores para as contas do cliente.
+- Para adicionar valores a uma conta Poupança ou Investimento, será necessário transferir de uma conta corrente, o mesmo vale para uma transação inversa.
+- É necessário guardar o histórico das transações efetuadas independente do tipo de conta.
+
 5. Operações de Caixa
+- No caixa só é possível acesso a valores disponíveis na Conta Corrente.
+- Não é permitido realizar saques acima do valor do limite da conta.
+
 6. Terminal de Auto Atendimento
+- No caixa só é possível acesso a valores disponíveis na Conta Corrente.
+- Não é permitido realizar saques acima do valor do limite da conta.
+
 7. Operações de Home Banking
+- Pelo home banking, é possível trasferir dinheiro entre as contas do cliente.
