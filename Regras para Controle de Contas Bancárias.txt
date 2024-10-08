@@ -4,12 +4,13 @@
 - O CCB deve prover uma API externa com documentação para movimentações bancárias.
 
 2. Manter Clientes
-- Cada cliente deverá conter apenas 1 cadastro, baseado no documento do cliente.
-- Caso tente cadastrar um novo cliente com o mesmo documento, devo apenas adicionar o email em uma lista de emails de acesso.
-- Cada cliente pode conter apenas uma conta do tipo Conta Corrente, uma do tipo Poupança e quantas contas de investimentos desejar.
+OK - O cadastro do cliente deverá conter o nome, CPF e o email como obrigatórios, e válidos.
+OK - Cada cliente deverá conter apenas 1 cadastro, baseado no documento do cliente.
+- Ao excluir um cliente, este deverá estar com todas as contas zeradas, ou não possuir contas vinculadas.
 
 3. Manter Contas
 - Cada conta deve obrigatoriamente conter um cliente no momento do cadastro.
+- Cada cliente pode conter apenas uma conta do tipo Conta Corrente, uma do tipo Poupança e quantas contas de investimentos desejar.
 - Uma conta de Poupança ou de Investimento deve obrigatoriamente conter uma conta do tipo Conta Corrente como principal.
 - Para uma conta possuir limite, é necessário ao menos 1 conta de Investimentos;
 - O valor do limite será o mesmo do total aplicado.
