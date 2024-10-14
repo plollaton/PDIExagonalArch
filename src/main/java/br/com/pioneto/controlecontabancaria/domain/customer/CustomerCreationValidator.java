@@ -14,7 +14,7 @@ public class CustomerCreationValidator extends AbstractValidator<CustomerCreatio
     public void rules() {
         setPropertyOnContext("Customer");
 
-        ruleFor(CustomerCreationDto::getNome)
+        ruleFor(CustomerCreationDto::getName)
                 .must(not(nullValue()))
                 .withMessage("Customer must have a name.")
                 .withFieldName("name");

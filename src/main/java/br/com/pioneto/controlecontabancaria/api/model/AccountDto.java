@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CustomerDto {
+public class AccountDto {
+
     private Integer id;
-    private String name;
-    private String cpf;
-    private String email;
-    private List<AccountDto> accounts = new ArrayList<>();
+    private String number;
+    private String creationDate;
+    private String accountType;
 }

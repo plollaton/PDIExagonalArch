@@ -10,6 +10,7 @@ import org.mapstruct.MappingConstants;
 public interface CustomerMapper {
 
     CustomerEntity customerCreationDtoToCustomerEntity(CustomerCreationDto customer);
+    @
     CustomerDto customerEntityToCustomerDto(CustomerEntity customer);
     CustomerEntity customerDtoToCustomerEntity(CustomerDto customerDto);
 }

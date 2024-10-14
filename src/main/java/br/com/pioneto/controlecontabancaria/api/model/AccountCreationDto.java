@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CustomerCreationDto {
+public class AccountCreationDto {
 
-    private String name;
-    private String cpf;
-    private String email;
+    private Integer customerId;
+    private String accountType;
 }
